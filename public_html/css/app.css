@@ -1,0 +1,45 @@
+html, body {
+    height:100%;
+}
+.window-message-container {
+    height: 100%;
+    width:100%;
+}
+.window-message {
+    position: absolute;
+    top: 50%;
+    right:50%;
+    transform-origin: 100% 0%;
+    transform: translateY(-50%) translateX(50%);
+    width:400px;
+    border: 3px solid brown;
+    transition:all linear 0.2s;
+    opacity: 1;
+}
+
+.window-message.ng-leave {
+    
+}
+.window-message.ng-hide {
+    transform: scale(0.00001,0.00001);
+    
+/*    height:0px;
+    width: 0px;
+    display: block !important;*/
+}
+.window-message h3 {
+    margin-top: 10px;
+    text-align: center;
+}
+.window-message ul {
+    list-style-type: none;
+    padding: 0px;
+}
+.window-message li {
+    width:380;
+    height:30px;
+    line-height:30px;
+    border:1px black solid;
+    margin-bottom: 5px;
+    padding:4px;
+}

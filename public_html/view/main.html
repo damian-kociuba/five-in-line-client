@@ -1,0 +1,13 @@
+<div class="window-message" ng-show="isGreetingMessageShowed()">
+    <h3>Hello!</h3>
+    <ul>
+        <li>New public game</li>
+        <li ng-click="createPrivateGame()">New private game</li>
+        <li>New private game</li>
+    </ul>
+</div>
+<div class="window-message" ng-show="isWaitingForSecondPlayer">
+    <h3>Waiting for second player</h3>
+    Send to your friend this link:<br/>
+    <a href="{{newPrivateGameJoinUrl}}">{{newPrivateGameJoinUrl}}</a>
+</div>
