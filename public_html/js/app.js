@@ -9,6 +9,10 @@ function onPrivateGameCreatedCommand($scope, message) {
     $scope.isWaitingForSecondPlayer = true;
     $scope.$apply();
 }
+
+function onSecondPlayerJoinToPrivateGame($scope, message) {
+    console.log('second player joined! Lets play!');
+}
 var FiveInRowGameApp = angular.module('FiveInRowGameApp', ['ngAnimate', 'ngRoute']);
 
 FiveInRowGameApp.config(['$routeProvider',
@@ -24,6 +28,7 @@ FiveInRowGameApp.config(['$routeProvider',
 
 FiveInRowGameApp.controller('MainCtrl', ['$scope', function ($scope) {
         var socket = new WebSocket("ws://127.0.0.1:8080");
+        console.log(socket);
         $scope.isGame = false;
         $scope.isGreetingMessageActive = true;
         $scope.isWaitingForSecondPlayer = false;
@@ -51,6 +56,12 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', function ($scope) {
     }]);
 
 FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', function ($scope, $routeParams) {
-        var gameHash = $routeParams.gameHash;
-        console.log('join to private game: '+gameHash);
+        var gameHashValue = $routeParams.gameHash;
+        var socket = new WebSocket("ws://127.0.0.1:8080");
+        console.log('joining to private game: '+gameHashValue);
+        console.log(socket);
+        socket.send(JSON.stringify({
+            command:'JoinToPrivateGame',
+            parameters: {gameHash:gameHashValue}
+        }));
     }]);
