@@ -10,7 +10,7 @@ function onPrivateGameCreatedCommand($scope, message) {
     $scope.$apply();
 }
 
-function onSecondPlayerJoinToPrivateGame($scope, message) {
+function onSecondPlayerJoinToPrivateGameCommand($scope, message) {
     console.log('second player joined! Lets play!');
 }
 var FiveInRowGameApp = angular.module('FiveInRowGameApp', ['ngAnimate', 'ngRoute']);
@@ -50,7 +50,7 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', function ($scope) {
             if (typeof window[functionToRunName] === 'function') {
                 window[functionToRunName]($scope, messageDecoded);
             } else {
-                throw new Exception('not found corresponding function to command ' + messageDecoded.command);
+                throw 'not found corresponding function to command ' + messageDecoded.command;
             }
         };
     }]);
@@ -58,10 +58,21 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', function ($scope) {
 FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', function ($scope, $routeParams) {
         var gameHashValue = $routeParams.gameHash;
         var socket = new WebSocket("ws://127.0.0.1:8080");
-        console.log('joining to private game: '+gameHashValue);
-        console.log(socket);
-        socket.send(JSON.stringify({
-            command:'JoinToPrivateGame',
-            parameters: {gameHash:gameHashValue}
-        }));
+        
+        $scope.joinToPrivateGame = function() {
+            var playerName = $scope.playerName;
+            socket.send(JSON.stringify({
+                command: 'JoinToPrivateGame',
+                parameters: {
+                    gameHash: gameHashValue,
+                    playerName: playerName
+                }
+            }));
+        };
+        
+        socket.onmessage = function(msg) {
+            console.log(msg);
+        };
+        
+
     }]);
