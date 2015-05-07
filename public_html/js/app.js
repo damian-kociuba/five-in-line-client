@@ -1,18 +1,6 @@
 'use strict';
 /* App Module */
 
-function onPrivateGameCreatedCommand($scope, message) {
-    console.log('Mam hash gry!!');
-    $scope.newPrivateGameIsCreated = true;
-    $scope.newPrivateGameJoinUrl = document.URL + 'join/' + message.data.gameHashId;
-    $scope.isGreetingMessageActive = false;
-    $scope.isWaitingForSecondPlayer = true;
-    $scope.$apply();
-}
-
-function onSecondPlayerJoinToPrivateGameCommand($scope, message) {
-    console.log('second player joined! Lets play!');
-}
 var FiveInRowGameApp = angular.module('FiveInRowGameApp', ['ngAnimate', 'ngRoute']);
 
 FiveInRowGameApp.config(['$routeProvider',
@@ -26,7 +14,46 @@ FiveInRowGameApp.config(['$routeProvider',
         });
     }]);
 
-FiveInRowGameApp.controller('MainCtrl', ['$scope', function ($scope) {
+FiveInRowGameApp.factory('onStartGameCommand', ['$location', function ($location) {
+
+        var obj = {};
+        obj.run = function ($scope, message) {
+            console.log('second player joined! Lets play!');
+            $scope.$apply(function() { $location.path("/game"); });
+        };
+        return obj;
+    }]);
+
+FiveInRowGameApp.factory('onPrivateGameCreatedCommand', ['$location', function ($location) {
+        var obj = {};
+        obj.run = function ($scope, message) {
+            console.log('Mam hash gry!!');
+            $scope.newPrivateGameIsCreated = true;
+            $scope.newPrivateGameJoinUrl = document.URL + 'join/' + message.data.gameHashId;
+            $scope.isGreetingMessageActive = false;
+            $scope.isWaitingForSecondPlayer = true;
+            $scope.$apply();
+        };
+        return obj;
+    }]);
+
+FiveInRowGameApp.service('commandManager', ['$injector', function($injector) {
+        var $scope;
+        this.setScope = function($scopeArg) {
+            $scope = $scopeArg;
+        };
+        this.onMessage = function (msg) {
+            var messageDecoded = JSON.parse(msg.data);
+
+            var commandNameToGet = 'on' + messageDecoded.command + 'Command';
+
+            $injector.invoke([commandNameToGet, function (command) {
+                    command.run($scope, messageDecoded);
+                }]);
+        };
+}]);
+
+FiveInRowGameApp.controller('MainCtrl', ['$scope', 'commandManager', function ($scope, commandManager) {
         var socket = new WebSocket("ws://127.0.0.1:8080");
         console.log(socket);
         $scope.isGame = false;
@@ -44,22 +71,15 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', function ($scope) {
         $scope.isGreetingMessageShowed = function () {
             return $scope.isGreetingMessageActive;
         };
-        socket.onmessage = function (msg) {
-            var messageDecoded = JSON.parse(msg.data);
-            var functionToRunName = 'on' + messageDecoded.command + 'Command';
-            if (typeof window[functionToRunName] === 'function') {
-                window[functionToRunName]($scope, messageDecoded);
-            } else {
-                throw 'not found corresponding function to command ' + messageDecoded.command;
-            }
-        };
+        commandManager.setScope($scope);
+        socket.onmessage = commandManager.onMessage;
     }]);
 
-FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', function ($scope, $routeParams) {
+FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 'commandManager', function ($scope, $routeParams,commandManager) {
         var gameHashValue = $routeParams.gameHash;
         var socket = new WebSocket("ws://127.0.0.1:8080");
-        
-        $scope.joinToPrivateGame = function() {
+
+        $scope.joinToPrivateGame = function () {
             var playerName = $scope.playerName;
             socket.send(JSON.stringify({
                 command: 'JoinToPrivateGame',
@@ -69,10 +89,9 @@ FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 
                 }
             }));
         };
-        
-        socket.onmessage = function(msg) {
-            console.log(msg);
-        };
-        
+
+        commandManager.setScope($scope);
+        socket.onmessage = commandManager.onMessage;
+
 
     }]);
