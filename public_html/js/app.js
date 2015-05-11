@@ -2,6 +2,7 @@
 /* App Module */
 
 var FiveInRowGameApp = angular.module('FiveInRowGameApp', ['ngAnimate', 'ngRoute']);
+var socket = new WebSocket("ws://127.0.0.1:8080");
 
 FiveInRowGameApp.config(['$routeProvider',
     function ($routeProvider) {
@@ -11,15 +12,30 @@ FiveInRowGameApp.config(['$routeProvider',
         }).when('/', {
             controller: 'MainCtrl',
             templateUrl: 'view/main.html'
+        }).when('/game', {
+            controller: 'gameCtrl',
+            templateUrl: 'view/game.html'
         });
     }]);
+FiveInRowGameApp.service('gameSystem', [function () {
+        this.isPlayerTurn = false;
+        this.isGameStarted = false;
+        this.playerColor;
 
-FiveInRowGameApp.factory('onStartGameCommand', ['$location', function ($location) {
+        console.log('gamesystem construct');
+    }]);
+
+FiveInRowGameApp.factory('onStartGameCommand', ['$location', 'gameSystem', function ($location, gameSystem) {
 
         var obj = {};
         obj.run = function ($scope, message) {
             console.log('second player joined! Lets play!');
-            $scope.$apply(function() { $location.path("/game"); });
+            gameSystem.isPlayerTurn = message.parameters.isPlayerTurn;
+            gameSystem.playerColor = message.parameters.playerColor;
+            gameSystem.isGameStarted = true;
+            $scope.$apply(function () {
+                $location.path("/game");
+            });
         };
         return obj;
     }]);
@@ -37,9 +53,9 @@ FiveInRowGameApp.factory('onPrivateGameCreatedCommand', ['$location', function (
         return obj;
     }]);
 
-FiveInRowGameApp.service('commandManager', ['$injector', function($injector) {
+FiveInRowGameApp.service('commandManager', ['$injector', function ($injector) {
         var $scope;
-        this.setScope = function($scopeArg) {
+        this.setScope = function ($scopeArg) {
             $scope = $scopeArg;
         };
         this.onMessage = function (msg) {
@@ -51,10 +67,9 @@ FiveInRowGameApp.service('commandManager', ['$injector', function($injector) {
                     command.run($scope, messageDecoded);
                 }]);
         };
-}]);
+    }]);
 
 FiveInRowGameApp.controller('MainCtrl', ['$scope', 'commandManager', function ($scope, commandManager) {
-        var socket = new WebSocket("ws://127.0.0.1:8080");
         console.log(socket);
         $scope.isGame = false;
         $scope.isGreetingMessageActive = true;
@@ -75,9 +90,8 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', 'commandManager', function ($
         socket.onmessage = commandManager.onMessage;
     }]);
 
-FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 'commandManager', function ($scope, $routeParams,commandManager) {
+FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 'commandManager', function ($scope, $routeParams, commandManager) {
         var gameHashValue = $routeParams.gameHash;
-        var socket = new WebSocket("ws://127.0.0.1:8080");
 
         $scope.joinToPrivateGame = function () {
             var playerName = $scope.playerName;
@@ -95,3 +109,46 @@ FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 
 
 
     }]);
+
+FiveInRowGameApp.controller('gameCtrl', ['$scope', 'gameSystem', 'commandManager', function ($scope, gameSystem, commandManager) {
+        $scope.board = new Board(20, 20);
+        $scope.isPlayerTurn = function () {
+            return gameSystem.isPlayerTurn;
+        };
+        $scope.isGameValid = function () {
+            return gameSystem.isGameStarted;
+        };
+        $scope.makeMove = function (x, y) {
+            console.log('Move to' + x + ', ' + y);
+            socket.send(JSON.stringify({
+                command: 'MakeMove',
+                parameters: {
+                    x: x,
+                    y: y
+                }
+            }));
+
+        };
+        console.log(gameSystem);
+        commandManager.setScope($scope);
+        socket.onmessage = commandManager.onMessage;
+    }]);
+
+function Board(width, height) {
+    this.width = width;
+    this.height = height;
+    this.fields = [];
+    for (var i = 0; i < height; i++) {
+        this.fields[i] = [];
+        for (var j = 0; j < width; j++) {
+            this.fields[i][j] = {};
+        }
+    }
+
+    this.getByXY = function (x, y) {
+        return this.fields[y][x];
+    };
+    this.setByXY = function (x, y, value) {
+        this.fields[y][x] = value;
+    };
+}
