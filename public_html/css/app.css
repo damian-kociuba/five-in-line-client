@@ -8,6 +8,7 @@ html, body {
     padding: 0px;
     margin:0px;
     font-family: sans-serif;
+    box-sizing: border-box;
 }
 .window-message-container {
     height: 100%;
@@ -44,7 +45,7 @@ html, body {
     padding: 0px;
 }
 .window-message li {
-    width:380;
+    width:380px;
     height:30px;
     line-height:30px;
     border:1px black solid;
@@ -57,20 +58,35 @@ html, body {
     display:inline-block;
 }*/
 .board {
-    display:table;
     margin:0px;
-
-}
-.board .row {
-    display: table-row;
+    border-top:1px solid black;
+    border-left:1px solid black;
 }
 .board .field {
-    display:table-cell;
-    border: 1px solid black;
-    margin:0px;
+    margin-right: 1px;
+    display: inline-block;
     padding: 0px;
     font-size: 0px;
+    height:100%;
+    background-color: red;
+}
 
+.board .field .black, .board .field .white {
+    width:80%;
+    height: 80%;
+    border-radius:100px;
+    margin:auto;
+    position:relative;
+    top: 50%;
+    transform: translateY(-50%);
+
+}
+.board .field .black {
+    background-color: black;
+}
+
+.board .field .white {
+    background-color: white;
 }
 div.full-screen-message {
     width: 100%;
@@ -93,13 +109,22 @@ div.info-panel {
     border: 1px solid black;
     padding: 4px;
     font-size: 14px;
-    width: calc(100% - 10px);
-    height: calc(100% - 10px);
+    width: calc(100%);
+    height: calc(100%);
 }
 @media (orientation: landscape) {
     .board {
         width:100vh;
         height:100vh;
+    }
+    .board .row {
+        width:100vh;
+        height: calc(100vh / 20 - 1px); /* one pixel for margin*/
+        margin-bottom: 1px;
+    }
+
+    .board .field {
+        width: calc(100vh / 20 - 1px);
     }
 
     div.info-panel-container {
@@ -109,10 +134,11 @@ div.info-panel {
     }
 
     div.table-container {
-        background-color:red;
+        background-color:black;
         display:inline-block;
         float: left;
     }
+
 }
 
 @media (orientation: portrait) {
@@ -120,13 +146,20 @@ div.info-panel {
         width:100vw;
         height:100vw;
     }
-
+    .board .row {
+        width:100vw;
+        height: calc(100vw / 20 - 1px);
+    }
+    .board .field {
+        width: calc(100vw / 20 - 1px);
+    }
     div.info-panel-container {
         width:100vw; 
         height:100px; 
     }
     div.table-container {
-        background-color:red;
+        background-color:black;
         display:inline-block;
     }
+
 }

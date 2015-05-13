@@ -1,12 +1,16 @@
-<div class="full-screen-message" ng-show="! isGameValid()">
+<!--<div class="full-screen-message" ng-show="!isGameValid()">
     Non valid game
-</div>
+</div>-->
 
 <div class="container">
     <div class="table-container">
         <div class="board">
-            <div class="row" ng-repeat="row in board.fields">
-                <div class="field" ng-repeat="field in row" ng-click="makeMove($index, $parent.$index)"></div>
+            <div class="row" ng-repeat="row in getBoard().fields">
+                <div class="field" ng-repeat="field in row" ng-click="makeMove($index, $parent.$index)">
+                    <div ng-show="field.type=='black'" class="black"></div>
+                    <div ng-show="field.type=='white'" class="white"></div>
+                </div>
+
             </div>
         </div>
     </div>

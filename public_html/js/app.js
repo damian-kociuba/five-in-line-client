@@ -21,6 +21,7 @@ FiveInRowGameApp.service('gameSystem', [function () {
         this.isPlayerTurn = false;
         this.isGameStarted = false;
         this.playerColor;
+        this.board = new Board(20,20);
 
         console.log('gamesystem construct');
     }]);
@@ -48,6 +49,18 @@ FiveInRowGameApp.factory('onPrivateGameCreatedCommand', ['$location', function (
             $scope.newPrivateGameJoinUrl = document.URL + 'join/' + message.data.gameHashId;
             $scope.isGreetingMessageActive = false;
             $scope.isWaitingForSecondPlayer = true;
+            $scope.$apply();
+        };
+        return obj;
+    }]);
+FiveInRowGameApp.factory('onMoveMadeCommand', ['gameSystem', function (gameSystem) {
+        var obj = {};
+        obj.run = function ($scope, message) {
+            console.log('Zrobiono ruch');
+            console.log(message);
+            var board = gameSystem.board;
+            board.setByXY(message.parameters.x, message.parameters.y, {type: message.parameters.color});
+            gameSystem.isPlayerTurn = message.parameters.isPlayerTurn;
             $scope.$apply();
         };
         return obj;
@@ -111,14 +124,23 @@ FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 
     }]);
 
 FiveInRowGameApp.controller('gameCtrl', ['$scope', 'gameSystem', 'commandManager', function ($scope, gameSystem, commandManager) {
-        $scope.board = new Board(20, 20);
         $scope.isPlayerTurn = function () {
             return gameSystem.isPlayerTurn;
         };
         $scope.isGameValid = function () {
             return gameSystem.isGameStarted;
         };
+        $scope.getBoard = function() {
+            return gameSystem.board;
+        };
         $scope.makeMove = function (x, y) {
+            if(!gameSystem.isPlayerTurn) {
+                alert("It's not your turn");
+                return;
+            }
+            if(gameSystem.board.getByXY(x, y).type!=='empty') {
+               return; 
+            }
             console.log('Move to' + x + ', ' + y);
             socket.send(JSON.stringify({
                 command: 'MakeMove',
@@ -141,7 +163,7 @@ function Board(width, height) {
     for (var i = 0; i < height; i++) {
         this.fields[i] = [];
         for (var j = 0; j < width; j++) {
-            this.fields[i][j] = {};
+            this.fields[i][j] = {type:'empty'};
         }
     }
 
