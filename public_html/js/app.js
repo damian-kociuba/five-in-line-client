@@ -1,8 +1,9 @@
 'use strict';
 /* App Module */
+var REMOTE_ADDR = "ws://10.1.104.147:8080";
 
 var FiveInRowGameApp = angular.module('FiveInRowGameApp', ['ngAnimate', 'ngRoute']);
-var socket = new WebSocket("ws://127.0.0.1:8080");
+var socket = new WebSocket(REMOTE_ADDR);
 
 FiveInRowGameApp.config(['$routeProvider',
     function ($routeProvider) {
@@ -61,6 +62,16 @@ FiveInRowGameApp.factory('onMoveMadeCommand', ['gameSystem', function (gameSyste
             var board = gameSystem.board;
             board.setByXY(message.parameters.x, message.parameters.y, {type: message.parameters.color});
             gameSystem.isPlayerTurn = message.parameters.isPlayerTurn;
+            $scope.$apply();
+        };
+        return obj;
+    }]);
+FiveInRowGameApp.factory('onFinishGameCommand', ['gameSystem', function (gameSystem) {
+        var obj = {};
+        obj.run = function ($scope, message) {
+            console.log(message);
+            alert(message.parameters.result);
+            gameSystem.isPlayerTurn = false;
             $scope.$apply();
         };
         return obj;
