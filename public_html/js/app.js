@@ -3,7 +3,7 @@
 var REMOTE_ADDR = "ws://10.1.104.147:8080";
 
 var FiveInRowGameApp = angular.module('FiveInRowGameApp', ['ngAnimate', 'ngRoute']);
-var socket = new WebSocket(REMOTE_ADDR);
+var socket;
 
 FiveInRowGameApp.config(['$routeProvider',
     function ($routeProvider) {
@@ -22,7 +22,6 @@ FiveInRowGameApp.service('gameSystem', [function () {
         this.isPlayerTurn = false;
         this.isGameStarted = false;
         this.playerColor;
-        this.board = new Board(20,20);
 
         console.log('gamesystem construct');
     }]);
@@ -35,6 +34,7 @@ FiveInRowGameApp.factory('onStartGameCommand', ['$location', 'gameSystem', funct
             gameSystem.isPlayerTurn = message.parameters.isPlayerTurn;
             gameSystem.playerColor = message.parameters.playerColor;
             gameSystem.isGameStarted = true;
+            gameSystem.board = new Board(20,20);
             $scope.$apply(function () {
                 $location.path("/game");
             });
@@ -45,7 +45,6 @@ FiveInRowGameApp.factory('onStartGameCommand', ['$location', 'gameSystem', funct
 FiveInRowGameApp.factory('onPrivateGameCreatedCommand', ['$location', function ($location) {
         var obj = {};
         obj.run = function ($scope, message) {
-            console.log('Mam hash gry!!');
             $scope.newPrivateGameIsCreated = true;
             $scope.newPrivateGameJoinUrl = document.URL + 'join/' + message.data.gameHashId;
             $scope.isGreetingMessageActive = false;
@@ -76,6 +75,21 @@ FiveInRowGameApp.factory('onFinishGameCommand', ['gameSystem', function (gameSys
         };
         return obj;
     }]);
+FiveInRowGameApp.factory('onErrorCommand', ['gameSystem', function (gameSystem) {
+        var obj = {};
+        obj.run = function ($scope, message) {
+            console.error(message.parameters.message);
+        };
+        return obj;
+    }]);
+FiveInRowGameApp.factory('onCloseGameCommand', ['gameSystem', '$location', function (gameSystem, $location) {
+        var obj = {};
+        obj.run = function ($scope, message) {
+            $location.path('/').replace();
+            alert('Second player left the game');
+        };
+        return obj;
+    }]);
 
 FiveInRowGameApp.service('commandManager', ['$injector', function ($injector) {
         var $scope;
@@ -94,7 +108,8 @@ FiveInRowGameApp.service('commandManager', ['$injector', function ($injector) {
     }]);
 
 FiveInRowGameApp.controller('MainCtrl', ['$scope', 'commandManager', function ($scope, commandManager) {
-        console.log(socket);
+        socket = new WebSocket(REMOTE_ADDR);
+        console.log('new connection');
         $scope.isGame = false;
         $scope.isGreetingMessageActive = true;
         $scope.isWaitingForSecondPlayer = false;
@@ -115,6 +130,8 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', 'commandManager', function ($
     }]);
 
 FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 'commandManager', function ($scope, $routeParams, commandManager) {
+        socket = new WebSocket(REMOTE_ADDR);
+        console.log('new connection');
         var gameHashValue = $routeParams.gameHash;
 
         $scope.joinToPrivateGame = function () {
