@@ -1,8 +1,20 @@
-<div class="full-screen-message" ng-show="!isGameValid()">
-    Non valid game
+<div class="full-screen-message-container" ng-show="!isGameValid()">
+    <div class="full-screen-message">
+        Sorry, this game is not valid.
+        <br />
+        <a href="#/">Go to main menu</a>
+    </div>
 </div>
 
-<div class="container">
+<div class="full-screen-message-container" ng-show="secondPlayerLeftTheGame">
+    <div class="full-screen-message">
+        Second player left the game ;(
+        <br />
+        <a href="#/">Go to main menu</a>
+    </div>
+</div>
+
+<div class="container" ng-show="isGameValid()">
     <div class="table-container">
         <div class="board">
             <div class="row" ng-repeat="row in getBoard().fields">
@@ -24,3 +36,4 @@
         </div>
     </div>
 </div>
+

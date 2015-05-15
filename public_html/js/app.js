@@ -21,6 +21,7 @@ FiveInRowGameApp.config(['$routeProvider',
 FiveInRowGameApp.service('gameSystem', [function () {
         this.isPlayerTurn = false;
         this.isGameStarted = false;
+        this.isGameFinished = false;
         this.playerColor;
 
         console.log('gamesystem construct');
@@ -34,7 +35,7 @@ FiveInRowGameApp.factory('onStartGameCommand', ['$location', 'gameSystem', funct
             gameSystem.isPlayerTurn = message.parameters.isPlayerTurn;
             gameSystem.playerColor = message.parameters.playerColor;
             gameSystem.isGameStarted = true;
-            gameSystem.board = new Board(20,20);
+            gameSystem.board = new Board(20, 20);
             $scope.$apply(function () {
                 $location.path("/game");
             });
@@ -71,6 +72,7 @@ FiveInRowGameApp.factory('onFinishGameCommand', ['gameSystem', function (gameSys
             console.log(message);
             alert(message.parameters.result);
             gameSystem.isPlayerTurn = false;
+            gameSystem.isGameFinished = true;
             $scope.$apply();
         };
         return obj;
@@ -85,8 +87,11 @@ FiveInRowGameApp.factory('onErrorCommand', ['gameSystem', function (gameSystem) 
 FiveInRowGameApp.factory('onCloseGameCommand', ['gameSystem', '$location', function (gameSystem, $location) {
         var obj = {};
         obj.run = function ($scope, message) {
-            $location.path('/').replace();
-            alert('Second player left the game');
+            if (gameSystem.isGameStarted) {
+                gameSystem.isGameFinished = true;
+                $scope.secondPlayerLeftTheGame = true;
+                $scope.$apply();
+            }
         };
         return obj;
     }]);
@@ -107,7 +112,9 @@ FiveInRowGameApp.service('commandManager', ['$injector', function ($injector) {
         };
     }]);
 
-FiveInRowGameApp.controller('MainCtrl', ['$scope', 'commandManager', function ($scope, commandManager) {
+FiveInRowGameApp.controller('MainCtrl', ['$scope', 'commandManager', 'gameSystem', function ($scope, commandManager, gameSystem) {
+        gameSystem.isGameStarted = false;
+
         socket = new WebSocket(REMOTE_ADDR);
         console.log('new connection');
         $scope.isGame = false;
@@ -129,7 +136,9 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', 'commandManager', function ($
         socket.onmessage = commandManager.onMessage;
     }]);
 
-FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 'commandManager', function ($scope, $routeParams, commandManager) {
+FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 'commandManager', 'gameSystem', function ($scope, $routeParams, commandManager, gameSystem) {
+        gameSystem.isGameStarted = false;
+
         socket = new WebSocket(REMOTE_ADDR);
         console.log('new connection');
         var gameHashValue = $routeParams.gameHash;
@@ -152,22 +161,23 @@ FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 
     }]);
 
 FiveInRowGameApp.controller('gameCtrl', ['$scope', 'gameSystem', 'commandManager', function ($scope, gameSystem, commandManager) {
+        $scope.secondPlayerLeftTheGame = false;
         $scope.isPlayerTurn = function () {
             return gameSystem.isPlayerTurn;
         };
         $scope.isGameValid = function () {
             return gameSystem.isGameStarted;
         };
-        $scope.getBoard = function() {
+        $scope.getBoard = function () {
             return gameSystem.board;
         };
         $scope.makeMove = function (x, y) {
-            if(!gameSystem.isPlayerTurn) {
+            if (!gameSystem.isPlayerTurn) {
                 alert("It's not your turn");
                 return;
             }
-            if(gameSystem.board.getByXY(x, y).type!=='empty') {
-               return; 
+            if (gameSystem.board.getByXY(x, y).type !== 'empty') {
+                return;
             }
             console.log('Move to' + x + ', ' + y);
             socket.send(JSON.stringify({
@@ -179,9 +189,10 @@ FiveInRowGameApp.controller('gameCtrl', ['$scope', 'gameSystem', 'commandManager
             }));
 
         };
-        console.log(gameSystem);
         commandManager.setScope($scope);
-        socket.onmessage = commandManager.onMessage;
+        if ($scope.isGameValid()) {
+            socket.onmessage = commandManager.onMessage;
+        }
     }]);
 
 function Board(width, height) {
@@ -191,7 +202,7 @@ function Board(width, height) {
     for (var i = 0; i < height; i++) {
         this.fields[i] = [];
         for (var j = 0; j < width; j++) {
-            this.fields[i][j] = {type:'empty'};
+            this.fields[i][j] = {type: 'empty'};
         }
     }
 
