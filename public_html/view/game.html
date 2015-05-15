@@ -1,16 +1,33 @@
 <div class="full-screen-message-container" ng-show="!isGameValid()">
     <div class="full-screen-message">
-        Sorry, this game is not valid.
+        Sorry, this game is not valid...
         <br />
-        <a href="#/">Go to main menu</a>
+        <a class="button button-expanded" href="#/">Go to main menu</a>
     </div>
 </div>
 
 <div class="full-screen-message-container" ng-show="secondPlayerLeftTheGame">
     <div class="full-screen-message">
-        Second player left the game ;(
+        <h3>Second player left the game ;(</h3>
         <br />
-        <a href="#/">Go to main menu</a>
+        <a class="button button-expanded" href="#/">Go to main menu</a>
+    </div>
+</div>
+
+<div class="full-screen-message-container" ng-show="playerWin || opponentWin">
+    <div class="full-screen-message">
+        <h3 ng-show="playerWin">You win!</h3>
+        <h3 ng-show="opponentWin">You lost...</h3>
+        <br />
+        <a class="button button-expanded" href="#/">Go to main menu</a>
+    </div>
+</div>
+
+<div class="full-screen-message-container" ng-show="isNotPlayerTurnMessageShow">
+    <div class="full-screen-message">
+        <h3>It's not your turn</h3>
+        <br />
+        <a class="button button-expanded" ng-click='isNotPlayerTurnMessageShow=false'>OK</a>
     </div>
 </div>
 

@@ -1,13 +1,30 @@
-<div class="window-message" ng-show="isGreetingMessageShowed()">
-    <h3>Hello!</h3>
-    <ul>
-        <li>New public game</li>
-        <li ng-click="createPrivateGame()">New private game</li>
-        <li>New private game</li>
-    </ul>
+
+
+<div class="animated-message full-screen-message" ng-show="isGreetingMessageShowed()">
+    <h3>Five in row game</h3>
+    <div class="menu">
+        <a class="button button-expanded button-disabled">New public game</a>
+        <a ng-click="createPrivateGame()" class="button button-expanded">New private game</a>
+        <a class="button button-expanded button-disabled">New game vs AI</a>
+    </div>
 </div>
-<div class="window-message" ng-show="isWaitingForSecondPlayer">
+<div class="animated-message full-screen-message" ng-show="isWaitingForSecondPlayer">
     <h3>Waiting for second player</h3>
     Send to your friend this link:<br/>
-    <a href="{{newPrivateGameJoinUrl}}">{{newPrivateGameJoinUrl}}</a>
+    <a class="invitation-link" href="{{newPrivateGameJoinUrl}}">{{newPrivateGameJoinUrl}}</a>
 </div>
+
+<!--<div class="board" style="width:40px; height:40px;">
+        <div class="field" style="width:100%">
+            <div  class="black"></div>
+            <div class="white"></div>
+        </div>
+
+</div>-->
+<!--<div class="full-screen-message-container" >
+    <div class="full-screen-message">
+        Second player left the game ;(
+        <br />
+        <a href="#/">Go to main menu</a>
+    </div>
+</div>-->

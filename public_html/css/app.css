@@ -11,84 +11,7 @@ html, body {
     font-family: sans-serif;
     box-sizing: border-box;
 }
-.window-message-container {
-    height: 100%;
-    width:100%;
-}
-.window-message {
-    position: absolute;
-    top: 50%;
-    right:50%;
-    transform-origin: 100% 0%;
-    transform: translateY(-50%) translateX(50%);
-    width:400px;
-    border: 3px solid brown;
-    transition:all linear 0.2s;
-    opacity: 1;
-}
 
-.window-message.ng-leave {
-
-}
-.window-message.ng-hide {
-    transform: scale(0.00001,0.00001);
-
-    /*    height:0px;
-        width: 0px;
-        display: block !important;*/
-}
-.window-message h3 {
-    margin-top: 10px;
-    text-align: center;
-}
-.window-message ul {
-    list-style-type: none;
-    padding: 0px;
-}
-.window-message li {
-    width:380px;
-    height:30px;
-    line-height:30px;
-    border:1px black solid;
-    margin-bottom: 5px;
-    padding:4px;
-}
-
-/*.table-container {
-    margin: auto;
-    display:inline-block;
-}*/
-.board {
-    margin:0px;
-    border-top:1px solid black;
-    border-left:1px solid black;
-}
-.board .field {
-    margin-right: 1px;
-    display: inline-block;
-    padding: 0px;
-    font-size: 0px;
-    height:100%;
-    background-color: red;
-}
-
-.board .field .black, .board .field .white {
-    width:80%;
-    height: 80%;
-    border-radius:100px;
-    margin:auto;
-    position:relative;
-    top: 50%;
-    transform: translateY(-50%);
-
-}
-.board .field .black {
-    background-color: black;
-}
-
-.board .field .white {
-    background-color: white;
-}
 div.full-screen-message-container {
     width: 100%;
     height: 100%;
@@ -101,7 +24,7 @@ div.full-screen-message-container {
     
 
 }
-div.full-screen-message-container div.full-screen-message {
+div.full-screen-message {
     width:400px;
     height:200px;
     border: 4px #81A594 solid;
@@ -115,7 +38,107 @@ div.full-screen-message-container div.full-screen-message {
     top: 50%;
     left: 50%;
     transform: translateY(-50%) translateX(-50%);
+}
 
+.animated-message {
+    position: absolute !important;
+    transform-origin: 0% 0%;
+
+    transition:all linear 0.2s;
+    opacity: 1;
+}
+
+.animated-message.ng-leave {
+
+}
+.animated-message.ng-hide {
+    transform: scale(0.00001,0.00001);
+
+    /*    height:0px;
+        width: 0px;
+        display: block !important;*/
+}
+.full-screen-message h3 {
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+input {
+    padding:5px;
+}
+.button {
+    display: inline-block;
+    padding: 6px;
+    border: 1px #81A594 solid;
+    border-radius: 4px;
+    text-decoration: none;
+    color:#00628B;
+    background-color: #EDEDE1;
+    cursor: pointer;
+    line-height: 100%;
+}
+.button:hover {
+    background-color: #DBDBD0;
+}
+
+.button-expanded {
+    width:100%;
+}
+.button-disabled {
+    cursor:auto;
+    background-color: #dddddd !important;
+}
+.menu .button {
+    margin-top:5px;
+}
+.menu .button:last-child {
+    margin-bottom:5px;
+}
+/*.table-container {
+    margin: auto;
+    display:inline-block;
+}*/
+.board {
+    margin:0px;
+    border-top:1px solid #8b8b7d;
+    border-left:1px solid #8b8b7d;
+    background-color:#8b8b7d;
+}
+.board .field {
+    margin-right: 1px;
+    display: inline-block;
+    padding: 0px;
+    font-size: 0px;
+    height:100%;
+    background-color: #c0c0a8;
+}
+
+.board .field .black, .board .field .white {
+    width:80%;
+    height: 80%;
+    border-radius:100px;
+    margin:auto;
+    position:relative;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 1px 1px 1px #4b4b4b;
+
+}
+.board .field .black {
+    
+    background-color: black;
+    background: linear-gradient(135deg, #45484d 0%,#000000 100%);
+    
+}
+
+.board .field .white {
+    background-color: white;
+    background: linear-gradient(135deg, #ffffff 0%,#e5e5e5 100%);
+}
+
+a.invitation-link {
+    font-size:10px;
+    line-height: 100% !important;
 }
 div.container {
     display: inline-block;
@@ -159,7 +182,7 @@ div.info-panel {
     }
 
     div.table-container {
-        background-color:black;
+        
         display:inline-block;
         float: left;
     }

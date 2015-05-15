@@ -70,7 +70,13 @@ FiveInRowGameApp.factory('onFinishGameCommand', ['gameSystem', function (gameSys
         var obj = {};
         obj.run = function ($scope, message) {
             console.log(message);
-            alert(message.parameters.result);
+            if(message.parameters.result === 'PlayerWin') {
+                $scope.playerWin = true;
+            } else if (message.parameters.result === 'OpponentWin') {
+                $scope.opponentWin = true;
+            } else {
+                console.error('Unknow result of finishGameCommand');
+            }
             gameSystem.isPlayerTurn = false;
             gameSystem.isGameFinished = true;
             $scope.$apply();
@@ -162,6 +168,10 @@ FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 
 
 FiveInRowGameApp.controller('gameCtrl', ['$scope', 'gameSystem', 'commandManager', function ($scope, gameSystem, commandManager) {
         $scope.secondPlayerLeftTheGame = false;
+        $scope.playerWin = false;
+        $scope.oponentWin = false;
+        $scope.isNotPlayerTurnMessageShow = false;
+        
         $scope.isPlayerTurn = function () {
             return gameSystem.isPlayerTurn;
         };
@@ -173,7 +183,7 @@ FiveInRowGameApp.controller('gameCtrl', ['$scope', 'gameSystem', 'commandManager
         };
         $scope.makeMove = function (x, y) {
             if (!gameSystem.isPlayerTurn) {
-                alert("It's not your turn");
+                $scope.isNotPlayerTurnMessageShow = true;
                 return;
             }
             if (gameSystem.board.getByXY(x, y).type !== 'empty') {
