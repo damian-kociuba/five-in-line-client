@@ -104,6 +104,9 @@ input {
     border-left:1px solid #8b8b7d;
     background-color:#8b8b7d;
 }
+.board .row {
+    margin-bottom: 1px;
+}
 .board .field {
     margin-right: 1px;
     display: inline-block;
@@ -113,7 +116,12 @@ input {
     background-color: #c0c0a8;
 }
 
-.board .field .black, .board .field .white {
+.free-pawn-container {
+    width: 12pt;
+    height:12pt;
+    display: inline-block;
+}
+.black-pawn, .white-pawn {
     width:80%;
     height: 80%;
     border-radius:100px;
@@ -124,14 +132,14 @@ input {
     box-shadow: 1px 1px 1px #4b4b4b;
 
 }
-.board .field .black {
+.black-pawn {
     
     background-color: black;
     background: linear-gradient(135deg, #45484d 0%,#000000 100%);
     
 }
 
-.board .field .white {
+.white-pawn {
     background-color: white;
     background: linear-gradient(135deg, #ffffff 0%,#e5e5e5 100%);
 }
@@ -149,18 +157,45 @@ div.container {
 }
 
 div.info-panel-container {
-    display:block;
+    display:inline-block;
 
 }
 
 div.info-panel {
-    border: 1px solid black;
+    border: 1px solid #8b8b7d;
     padding: 4px;
-    font-size: 14px;
+    font-size: 12pt;
+    line-height:200%;
     width: calc(100%);
     height: calc(100%);
 }
-@media (orientation: landscape) {
+
+
+/* for horizontal displays */
+.board {
+    width:100vw;
+    height:100vw;
+}
+.board .row {
+    width:100vw;
+    height: calc(100vw / 20 - 1px);
+}
+.board .field {
+    width: calc(100vw / 20 - 1px);
+}
+div.info-panel-container {
+    width:100vw; 
+    height:100px; 
+}
+div.table-container {
+    background-color:black;
+    display:inline-block;
+}
+
+
+
+/*@media (orientation: landscape) {*/
+@media (min-aspect-ratio: 4/3) {
     .board {
         width:100vh;
         height:100vh;
@@ -168,7 +203,7 @@ div.info-panel {
     .board .row {
         width:100vh;
         height: calc(100vh / 20 - 1px); /* one pixel for margin*/
-        margin-bottom: 1px;
+        
     }
 
     .board .field {
@@ -176,7 +211,7 @@ div.info-panel {
     }
 
     div.info-panel-container {
-        width:200px; 
+        width:33vh; 
         height:100vh; 
         float: left
     }
@@ -189,25 +224,3 @@ div.info-panel {
 
 }
 
-@media (orientation: portrait) {
-    .board {
-        width:100vw;
-        height:100vw;
-    }
-    .board .row {
-        width:100vw;
-        height: calc(100vw / 20 - 1px);
-    }
-    .board .field {
-        width: calc(100vw / 20 - 1px);
-    }
-    div.info-panel-container {
-        width:100vw; 
-        height:100px; 
-    }
-    div.table-container {
-        background-color:black;
-        display:inline-block;
-    }
-
-}

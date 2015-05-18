@@ -27,7 +27,7 @@
     <div class="full-screen-message">
         <h3>It's not your turn</h3>
         <br />
-        <a class="button button-expanded" ng-click='isNotPlayerTurnMessageShow=false'>OK</a>
+        <a class="button button-expanded" ng-click='isNotPlayerTurnMessageShow = false'>OK</a>
     </div>
 </div>
 
@@ -36,8 +36,8 @@
         <div class="board">
             <div class="row" ng-repeat="row in getBoard().fields">
                 <div class="field" ng-repeat="field in row" ng-click="makeMove($index, $parent.$index)">
-                    <div ng-show="field.type=='black'" class="black"></div>
-                    <div ng-show="field.type=='white'" class="white"></div>
+                    <div ng-show="field.type == 'black'" class="black-pawn"></div>
+                    <div ng-show="field.type == 'white'" class="white-pawn"></div>
                 </div>
 
             </div>
@@ -45,11 +45,17 @@
     </div>
     <div class="info-panel-container">
         <div class="info-panel">
+            Your color:
+            <div class="free-pawn-container">
+                <div class="black-pawn" ng-show="getPlayerColor() == 'black'"></div>
+                <div class="white-pawn" ng-show="getPlayerColor() == 'white'"></div>
+            </div>
+            <br />
             <span ng-show="isPlayerTurn()">Your turn</span>
             <span ng-hide="isPlayerTurn()">Opponent's turn</span>
-            
-            <hr />
-            <a href="#/">Go to main menu</a>
+
+            <br />
+            <a class="button" href="#/">Go to main menu</a>
         </div>
     </div>
 </div>

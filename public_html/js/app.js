@@ -181,6 +181,9 @@ FiveInRowGameApp.controller('gameCtrl', ['$scope', 'gameSystem', 'commandManager
         $scope.getBoard = function () {
             return gameSystem.board;
         };
+        $scope.getPlayerColor = function() {
+            return gameSystem.playerColor;
+        };
         $scope.makeMove = function (x, y) {
             if (!gameSystem.isPlayerTurn) {
                 $scope.isNotPlayerTurnMessageShow = true;
