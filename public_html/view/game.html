@@ -14,6 +14,14 @@
     </div>
 </div>
 
+<div class="full-screen-message-container" ng-show="connectionClosedByServer">
+    <div class="full-screen-message">
+        <h3>Connection closed by server. Sorry...</h3>
+        <br />
+        <a class="button button-expanded" href="#/">Go to main menu</a>
+    </div>
+</div>
+
 <div class="full-screen-message-container" ng-show="playerWin || opponentWin">
     <div class="full-screen-message">
         <h3 ng-show="playerWin">You win!</h3>

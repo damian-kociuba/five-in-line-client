@@ -8,23 +8,18 @@
         <a class="button button-expanded button-disabled">New game vs AI</a>
     </div>
 </div>
-<div class="animated-message full-screen-message" ng-show="isWaitingForSecondPlayer">
+<div class="animated-message full-screen-message" ng-show="isWaitingForSecondPlayer()">
     <h3>Waiting for second player</h3>
     Send to your friend this link:<br/>
     <a class="invitation-link" href="{{newPrivateGameJoinUrl}}">{{newPrivateGameJoinUrl}}</a>
 </div>
 
-<!--<div class="board" style="width:40px; height:40px;">
-        <div class="field" style="width:100%">
-            <div  class="black"></div>
-            <div class="white"></div>
-        </div>
 
-</div>-->
-<!--<div class="full-screen-message-container" >
+<div class="full-screen-message-container" ng-show="message !== null">
     <div class="full-screen-message">
-        Second player left the game ;(
+        <h3>{{message.content}}</h3>
         <br />
-        <a href="#/">Go to main menu</a>
+        <a class="button button-expanded" ng-click="resetCtrl()">Go to main menu</a>
     </div>
-</div>-->
+</div>
+
