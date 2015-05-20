@@ -1,7 +1,7 @@
 'use strict';
 /* App Module */
-var REMOTE_ADDR = "ws://five-in-row.herokuapp.com";
-//var REMOTE_ADDR = "ws://10.1.104.147:52597";
+var REMOTE_ADDR = "ws://five-in-row-server.herokuapp.com";
+//var REMOTE_ADDR = "ws://10.1.104.147:8080";
 
 
 var FiveInRowGameApp = angular.module('FiveInRowGameApp', ['ngAnimate', 'ngRoute']);
@@ -27,6 +27,8 @@ FiveInRowGameApp.service('gameSystem', [function () {
         this.isGameFinished = false;
         this.isWaitingForSecondPlayer = false;
         this.playerColor;
+        this.playerName;
+        this.opponentName;
 
         console.log('GameSystem construct');
     }]);
@@ -38,6 +40,10 @@ FiveInRowGameApp.factory('onStartGameCommand', ['$location', 'gameSystem', funct
             console.log('second player joined! Lets play!');
             gameSystem.isPlayerTurn = message.parameters.isPlayerTurn;
             gameSystem.playerColor = message.parameters.playerColor;
+            gameSystem.opponentName = message.parameters.opponentName;
+            
+            $scope.$parent.pageTitle = 'Five in row game - ' + gameSystem.playerName + ' vs. ' + gameSystem.opponentName;
+            
             gameSystem.isGameStarted = true;
             gameSystem.board = new Board(20, 20);
             $scope.$apply(function () {
@@ -62,7 +68,6 @@ FiveInRowGameApp.factory('onMoveMadeCommand', ['gameSystem', function (gameSyste
         var obj = {};
         obj.run = function ($scope, message) {
             console.log('Zrobiono ruch');
-            console.log(message);
             var board = gameSystem.board;
             board.setByXY(message.parameters.x, message.parameters.y, {type: message.parameters.color});
             gameSystem.isPlayerTurn = message.parameters.isPlayerTurn;
@@ -126,10 +131,6 @@ FiveInRowGameApp.factory('onCloseConnectionByServer', ['gameSystem', function (g
         return obj;
     }]);
 
-FiveInRowGameApp.factory('refreshConnection', [function () {
-
-    }]);
-
 FiveInRowGameApp.service('commandManager', ['$injector', function ($injector) {
         var $scope;
         this.setScope = function ($scopeArg) {
@@ -154,8 +155,15 @@ FiveInRowGameApp.service('commandManager', ['$injector', function ($injector) {
     }]);
 
 FiveInRowGameApp.service('socket', ['commandManager', function (commandManager) {
-        this.scope;
         this.connected = false;
+        var keepConnection = false;
+        var onOpenEvent;
+        var connectionRefresher = new ConnectionRefresher(this);
+
+        this.setKeepConnection = function (keepConnectionArg) {
+            keepConnection = keepConnectionArg;
+        };
+
         this.connect = function () {
             if (this.connected) {
                 return;
@@ -163,8 +171,28 @@ FiveInRowGameApp.service('socket', ['commandManager', function (commandManager) 
             this.socket = new WebSocket(REMOTE_ADDR);
             console.log('new connection');
 
-            this.socket.onmessage = commandManager.onMessage;
-            this.socket.onclose = commandManager.onClose;
+            this.socket.onmessage = function (msg) {
+
+                commandManager.onMessage(msg);
+                if (keepConnection) {
+                    connectionRefresher.restart();
+                }
+            };
+            this.socket.onclose = function () {
+                commandManager.onClose();
+                if (keepConnection) {
+                    connectionRefresher.stop();
+                }
+            };
+
+            this.socket.onopen = function () {
+                if (typeof (onOpenEvent) === 'function') {
+                    onOpenEvent();
+                }
+                if (keepConnection) {
+                    connectionRefresher.start();
+                }
+            };
 
             this.connected = true;
         };
@@ -175,47 +203,86 @@ FiveInRowGameApp.service('socket', ['commandManager', function (commandManager) 
             }
             this.socket.close();
             this.connected = false;
+
         };
 
         this.setWorkScope = function (scope) {
-
-            this.scope = scope;
             commandManager.setScope(scope);
         };
 
         this.setOnOpenEvent = function (fun) {
-            this.socket.onopen = fun;
+            onOpenEvent = fun;
         };
         this.send = function (msg) {
             this.socket.send(msg);
         };
     }]);
 
+
+function ConnectionRefresher(socket) {
+    this.interval = null;
+    this.start = function () {
+        this.interval = setInterval(function () {
+            socket.send(JSON.stringify({
+                command: 'RefreshConnection',
+                parameters: {}
+            }));
+            console.log('refresh connection!');
+        }, 50000);
+
+    };
+
+    this.stop = function () {
+
+        if (this.interval === null) {
+            return;
+        }
+        clearInterval(this.interval);
+        this.interval = null;
+    };
+
+    this.restart = function () {
+
+        this.stop();
+        this.start();
+    };
+
+}
+FiveInRowGameApp.controller('PageCtrl', ['$scope', function ($scope) {
+        $scope.pageTitle = 'Five in row game';
+}]);
 FiveInRowGameApp.controller('MainCtrl', ['$scope', 'gameSystem', 'socket', function ($scope, gameSystem, socket) {
+        $scope.playerName;
         $scope.resetCtrl = function () {
             gameSystem.isGameStarted = false;
             gameSystem.isWaitingForSecondPlayer = false;
+            $scope.isConfigurePrivateGameMode = false;
             $scope.message = null;
             $scope.isGreetingMessageActive = true;
-            
+            socket.setKeepConnection(false);
         };
-        
+
         $scope.resetCtrl();
-        
+
         $scope.isWaitingForSecondPlayer = function () {
             return gameSystem.isWaitingForSecondPlayer;
         };
 
         socket.disconnect(); //it is posible, that old game connection are still open
         socket.setWorkScope($scope);
+        $scope.configurePrivateGame = function () {
+            $scope.isGreetingMessageActive = false;
+            $scope.isConfigurePrivateGameMode = true;
+        };
         $scope.createPrivateGame = function () {
-
+            $scope.isConfigurePrivateGameMode = false;
             socket.connect();
-
+            gameSystem.playerName = $scope.playerName;
+            
             socket.setOnOpenEvent(function () {
                 socket.send(JSON.stringify({
                     command: 'CreatePrivateGame',
-                    parameters: {playerName: 'damian'}
+                    parameters: {playerName: $scope.playerName}
                 }));
             });
         };
@@ -230,7 +297,7 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', 'gameSystem', 'socket', funct
 
 FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 'gameSystem', 'socket', function ($scope, $routeParams, gameSystem, socket) {
         gameSystem.isGameStarted = false;
-
+        socket.setKeepConnection(false);
 
         var gameHashValue = $routeParams.gameHash;
 
@@ -238,7 +305,7 @@ FiveInRowGameApp.controller('joinToPrivateGameCtrl', ['$scope', '$routeParams', 
             socket.setWorkScope($scope);
             socket.connect();
             var playerName = $scope.playerName;
-
+            gameSystem.playerName = playerName;
             socket.setOnOpenEvent(function () {
                 socket.send(JSON.stringify({
                     command: 'JoinToPrivateGame',
@@ -258,6 +325,7 @@ FiveInRowGameApp.controller('gameCtrl', ['$scope', 'gameSystem', 'socket', funct
         $scope.playerWin = false;
         $scope.oponentWin = false;
         $scope.isNotPlayerTurnMessageShow = false;
+        socket.setKeepConnection(true);
 
         $scope.isPlayerTurn = function () {
             return gameSystem.isPlayerTurn;

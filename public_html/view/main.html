@@ -1,12 +1,17 @@
 
 
 <div class="animated-message full-screen-message" ng-show="isGreetingMessageShowed()">
-    <h3>Five in row game</h3>
+    <h3>Five in row game (alpha)</h3>
     <div class="menu">
         <a class="button button-expanded button-disabled">New public game</a>
-        <a ng-click="createPrivateGame()" class="button button-expanded">New private game</a>
+        <a ng-click="configurePrivateGame()" class="button button-expanded">New private game</a>
         <a class="button button-expanded button-disabled">New game vs AI</a>
     </div>
+</div>
+<div class="animated-message full-screen-message" ng-show="isConfigurePrivateGameMode">
+    <h3>Options</h3>
+    Your name: <input type="text" ng-model="playerName" /><br/>
+    <a ng-click="createPrivateGame()" class="button">Create</a>
 </div>
 <div class="animated-message full-screen-message" ng-show="isWaitingForSecondPlayer()">
     <h3>Waiting for second player</h3>
