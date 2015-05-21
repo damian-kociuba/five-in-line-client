@@ -1,8 +1,9 @@
 var http = require("http"),
         url = require("url"),
         path = require("path"),
-        fs = require("fs")
-port = process.argv[2] || 8888;
+        fs = require("fs");
+
+port = process.env.PORT || 5000;
 
 http.createServer(function (request, response) {
 
@@ -10,10 +11,10 @@ http.createServer(function (request, response) {
     uri = 'public_html'+uri;
     var filename = path.join(process.cwd(), uri);
 
-    path.exists(filename, function (exists) {
+    fs.exists(filename, function (exists) {
         
         if (!exists) {
-            
+            console.log('File not found: ' + filename);
             response.writeHead(404, {"Content-Type": "text/plain"});
             response.write("404 Not Found\n");
             response.end();
