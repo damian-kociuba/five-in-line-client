@@ -1,46 +1,13 @@
-var http = require("http"),
-        url = require("url"),
-        path = require("path"),
-        fs = require("fs");
+var express = require('express');
+var app = express();
 
-port = process.env.PORT || 5000;
+app.set('port', (process.env.PORT || 5000));
+app.use(express.static(__dirname + '/public_html/'));
 
-http.createServer(function (request, response) {
+app.get('/', function(request, response) {
+  response.send('Hello World!');
+});
 
-    var uri = url.parse(request.url).pathname;
-    uri = 'public_html'+uri;
-    var filename = path.join(process.cwd(), uri);
-
-    fs.exists(filename, function (exists) {
-        
-        if (!exists) {
-            console.log('File not found: ' + filename);
-            response.writeHead(404, {"Content-Type": "text/plain"});
-            response.write("404 Not Found\n");
-            response.end();
-            return;
-        }
-
-        if (fs.statSync(filename).isDirectory())
-            filename += '/index.html';
-
-//        response.writeHead(200, {"Content-Type": "text/plain"});
-//        response.write(filename);
-//        response.end();
-
-        fs.readFile(filename, "binary", function (err, file) {
-            if (err) {
-                response.writeHead(500, {"Content-Type": "text/plain"});
-                response.write(err + "\n");
-                response.end();
-                return;
-            }
-
-            response.writeHead(200);
-            response.write(file, "binary");
-            response.end();
-        });
-    });
-}).listen(parseInt(port, 10));
-
-console.log("Static file server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown");
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
