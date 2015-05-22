@@ -1,0 +1,33 @@
+div.game-area-container {
+    display: inline-block;
+    margin:auto;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+div.board-container {
+    display:inline-block;
+}
+
+div.info-panel-container {
+    width:100vw; 
+    height:100px; 
+}
+
+/*@media (orientation: landscape) {*/
+@media (min-aspect-ratio: 4/3) {
+
+    div.board-container {
+
+        display:inline-block;
+        float: left;
+    }
+
+    div.info-panel-container {
+        width:33vh; 
+        height:100vh; 
+        float: left
+    }
+
+}

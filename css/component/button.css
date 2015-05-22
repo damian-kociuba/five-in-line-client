@@ -1,0 +1,29 @@
+.button {
+    display: inline-block;
+    padding: 6px;
+    border: 1px #81A594 solid;
+    border-radius: 4px;
+    text-decoration: none;
+    color:#00628B;
+    background-color: #EDEDE1;
+    cursor: pointer;
+    line-height: 100%;
+    text-align:center;
+}
+.button:hover {
+    background-color: #DBDBD0;
+}
+
+.button-expanded {
+    width:100%;
+}
+.button-disabled {
+    cursor:auto;
+    background-color: #dddddd !important;
+}
+.menu .button {
+    margin-top:5px;
+}
+.menu .button:last-child {
+    margin-bottom:5px;
+}

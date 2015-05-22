@@ -1,0 +1,27 @@
+.free-pawn-container {
+    width: 12pt;
+    height:12pt;
+    display: inline-block;
+}
+.black-pawn, .white-pawn {
+    width:80%;
+    height: 80%;
+    border-radius:100px;
+    margin:auto;
+    position:relative;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 1px 1px 1px #4b4b4b;
+
+}
+.black-pawn {
+    
+    background-color: black;
+    background: linear-gradient(135deg, #45484d 0%,#000000 100%);
+    
+}
+
+.white-pawn {
+    background-color: white;
+    background: linear-gradient(135deg, #ffffff 0%,#e5e5e5 100%);
+}

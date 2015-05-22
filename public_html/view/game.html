@@ -39,8 +39,8 @@
     </div>
 </div>
 
-<div class="container" ng-show="isGameValid()">
-    <div class="table-container">
+<div class="game-area-container" ng-show="isGameValid()">
+    <div class="board-container">
         <div class="board">
             <div class="row" ng-repeat="row in getBoard().fields">
                 <div class="field" ng-repeat="field in row" ng-click="makeMove($index, $parent.$index)">

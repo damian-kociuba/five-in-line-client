@@ -1,4 +1,6 @@
 /public_html/bower_components
+/public_html/css/app.min.css
+/public_html/js/app.min.js
 /node_modules
 /nbproject
 
