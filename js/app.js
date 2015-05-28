@@ -1,7 +1,7 @@
 'use strict';
 /* App Module */
-var REMOTE_ADDR = "wss://five-in-row-server.herokuapp.com";
-//var REMOTE_ADDR = "ws://10.1.104.147:8080";
+//var REMOTE_ADDR = "wss://five-in-row-server.herokuapp.com";
+var REMOTE_ADDR = "ws://10.1.104.147:8080";
 
 
 var FiveInRowGameApp = angular.module('FiveInRowGameApp', ['ngAnimate', 'ngRoute']);

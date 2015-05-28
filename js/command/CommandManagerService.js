@@ -18,5 +18,5 @@ FiveInRowGameApp.service('CommandManager', ['$injector', function ($injector) {
             $injector.invoke(['OnCloseConnectionByServer', function (OnCloseConnectionByServer) {
                     OnCloseConnectionByServer.run($scope);
                 }]);
-        };
+        }; 
     }]);

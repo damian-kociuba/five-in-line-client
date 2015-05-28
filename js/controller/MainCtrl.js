@@ -17,19 +17,32 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', 'GameSystem', 'Socket', funct
 
         Socket.disconnect(); //it is posible, that old game connection are still open
         Socket.setWorkScope($scope);
+        
         $scope.configurePrivateGame = function () {
             $scope.isGreetingMessageActive = false;
             $scope.isConfigurePrivateGameMode = true;
         };
+        
         $scope.createPrivateGame = function () {
             $scope.isConfigurePrivateGameMode = false;
             Socket.connect();
             GameSystem.playerName = $scope.playerName;
-            
+
             Socket.setOnOpenEvent(function () {
                 Socket.send(JSON.stringify({
                     command: 'CreatePrivateGame',
                     parameters: {playerName: $scope.playerName}
+                }));
+            });
+        };
+
+        $scope.createGameVsAI = function () {
+            Socket.connect();
+
+            Socket.setOnOpenEvent(function () {
+                Socket.send(JSON.stringify({
+                    command: 'CreateGameVsAI',
+                    parameters: {}
                 }));
             });
         };
