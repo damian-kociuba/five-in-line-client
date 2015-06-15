@@ -4,6 +4,8 @@ FiveInRowGameApp.controller('GameCtrl', ['$scope', 'GameSystem', 'Socket', funct
         $scope.oponentWin = false;
         $scope.isNotPlayerTurnMessageShow = false;
         Socket.setKeepConnection(true);
+        Socket.setWorkScope($scope);
+        Socket.connect();
 
         $scope.isPlayerTurn = function () {
             return GameSystem.isPlayerTurn;
@@ -25,6 +27,8 @@ FiveInRowGameApp.controller('GameCtrl', ['$scope', 'GameSystem', 'Socket', funct
             if (GameSystem.board.getByXY(x, y).type !== 'empty') {
                 return;
             }
+            GameSystem.board.setByXY(x, y, {type: GameSystem.playerColor});
+            GameSystem.isPlayerTurn = false;
             console.log('Move to' + x + ', ' + y);
             Socket.send(JSON.stringify({
                 command: 'MakeMove',
@@ -35,6 +39,6 @@ FiveInRowGameApp.controller('GameCtrl', ['$scope', 'GameSystem', 'Socket', funct
             }));
 
         };
-        Socket.setWorkScope($scope);
-        Socket.connect();
+
+
     }]);

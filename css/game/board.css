@@ -30,7 +30,16 @@
     width: calc(100vw / 20 - 1px);
 }
 
+.field.last-move {
+    animation-name: last-move-animation;
+    animation-duration: 2s;
+}
 
+@keyframes last-move-animation {
+    0%   {background-color: #c0c0a8;}
+    50%  {background-color: yellow;}
+    100% {background-color: #c0c0a8;}
+}
 
 /*@media (orientation: landscape) {*/
 @media (min-aspect-ratio: 4/3) {
