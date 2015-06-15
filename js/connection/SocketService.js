@@ -17,7 +17,7 @@ FiveInRowGameApp.service('Socket', ['CommandManager', function (CommandManager) 
             console.log('new connection');
 
             socket.onmessage = function (msg) {
-
+                console.log(msg);
                 CommandManager.onMessage(msg);
                 if (keepConnection) {
                     connectionRefresher.restart();

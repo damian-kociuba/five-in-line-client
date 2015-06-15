@@ -23,7 +23,7 @@ FiveInRowGameApp.factory('onPrivateGameCreatedCommand', ['GameSystem', function 
         var obj = {};
         obj.run = function ($scope, message) {
             $scope.newPrivateGameIsCreated = true;
-            $scope.newPrivateGameJoinUrl = document.URL + 'join/' + message.data.gameHashId;
+            $scope.newPrivateGameJoinUrl = document.URL + 'join/' + message.parameters.gameHashId;
             $scope.isGreetingMessageActive = false;
             GameSystem.isWaitingForSecondPlayer = true;
             $scope.$apply();
