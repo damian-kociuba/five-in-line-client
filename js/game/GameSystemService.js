@@ -3,6 +3,7 @@ FiveInRowGameApp.service('GameSystem', [function () {
         this.isGameStarted = false;
         this.isGameFinished = false;
         this.isWaitingForSecondPlayer = false;
+        this.isWaitingForSecondPublicPlayer = false;
         this.playerColor;
         this.playerName;
         this.opponentName;

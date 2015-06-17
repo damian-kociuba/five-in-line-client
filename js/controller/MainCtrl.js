@@ -3,6 +3,7 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', 'GameSystem', 'Socket', funct
         $scope.resetCtrl = function () {
             GameSystem.isGameStarted = false;
             GameSystem.isWaitingForSecondPlayer = false;
+            GameSystem.isWaitingForSecondPublicPlayer = false;
             $scope.isConfigurePrivateGameMode = false;
             $scope.message = null;
             $scope.isGreetingMessageActive = true;
@@ -16,6 +17,9 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', 'GameSystem', 'Socket', funct
 
         $scope.isWaitingForSecondPlayer = function () {
             return GameSystem.isWaitingForSecondPlayer;
+        };
+        $scope.isWaitingForSecondPublicPlayer = function () {
+            return GameSystem.isWaitingForSecondPublicPlayer;
         };
 
         Socket.disconnect(); //it is posible, that old game connection are still open
@@ -31,7 +35,7 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', 'GameSystem', 'Socket', funct
             $scope.isConfigurePublicGameMode = false;
             Socket.connect();
             GameSystem.playerName = $scope.playerName;
-            $scope.isWaitingForSecondPublicPlayer = true;
+            GameSystem.isWaitingForSecondPublicPlayer = true;
             
             Socket.setOnOpenEvent(function () {
                 Socket.send(JSON.stringify({

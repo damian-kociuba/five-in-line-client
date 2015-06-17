@@ -12,6 +12,13 @@ FiveInRowGameApp.factory('OnCloseConnectionByServer', ['GameSystem', function (G
                     content: 'The waiting time has elapsed'
                 };
             }
+             else if (GameSystem.isWaitingForSecondPublicPlayer) {
+
+                $scope.message = {
+                    type: 'error',
+                    content: 'There is nobody else to game. Please try later.'
+                };
+            }
             $scope.$apply();
         };
         return obj;
