@@ -1,7 +1,7 @@
 
 
 <div class="animated-message full-screen-message" ng-show="isGreetingMessageShowed()">
-    <h3>Five in row game (alpha)</h3>
+    <h3>Five in row game - Gomoku</h3>
     <div class="menu">
         <a ng-click="configurePublicGame()" class="button button-expanded">New public game</a>
         <a ng-click="configurePrivateGame()" class="button button-expanded">New private game</a>
@@ -22,7 +22,17 @@
 </div>
 
 <div class="animated-message full-screen-message" ng-show="isWaitingForSecondPublicPlayer">
-    <h3>Waiting for second player</h3>
+    <h3>Waiting for second player...</h3>
+    <div class="loader">
+        <div class="loader-inner cube-transition">
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+<div class="animated-message full-screen-message" ng-show="isWaitingForResponse">
+    <h3>Generating private game link...</h3>
     <div class="loader">
         <div class="loader-inner cube-transition">
             <div></div>
@@ -32,9 +42,15 @@
 </div>
 
 <div class="animated-message full-screen-message" ng-show="isWaitingForSecondPlayer()">
-    <h3>Waiting for second player</h3>
+    <h3>Waiting for second player...</h3>
     Send to your friend this link:<br/>
     <a class="invitation-link" href="{{newPrivateGameJoinUrl}}">{{newPrivateGameJoinUrl}}</a>
+    <div class="loader">
+        <div class="loader-inner cube-transition">
+            <div></div>
+            <div></div>
+        </div>
+    </div>
 </div>
 
 

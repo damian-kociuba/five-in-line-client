@@ -7,7 +7,9 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', 'GameSystem', 'Socket', funct
             $scope.message = null;
             $scope.isGreetingMessageActive = true;
             $scope.isWaitingForSecondPublicPlayer = false;
+            $scope.isWaitingForResponse = false;
             Socket.setKeepConnection(false);
+            $scope.$parent.pageTitle = "Five in row game";
         };
 
         $scope.resetCtrl();
@@ -49,7 +51,7 @@ FiveInRowGameApp.controller('MainCtrl', ['$scope', 'GameSystem', 'Socket', funct
             $scope.isConfigurePrivateGameMode = false;
             Socket.connect();
             GameSystem.playerName = $scope.playerName;
-
+            $scope.isWaitingForResponse = true;
             Socket.setOnOpenEvent(function () {
                 Socket.send(JSON.stringify({
                     command: 'CreatePrivateGame',
