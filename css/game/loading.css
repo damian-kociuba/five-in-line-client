@@ -1,0 +1,7 @@
+.loader {
+    margin: 65px auto auto;
+    width: 30px;
+}
+.loader .loader-inner > div {
+    background: #00628b !important;
+}
