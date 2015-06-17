@@ -7,6 +7,4 @@ FiveInRowGameApp.service('GameSystem', [function () {
         this.playerColor;
         this.playerName;
         this.opponentName;
-
-        console.log('GameSystem construct');
     }]);

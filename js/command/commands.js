@@ -3,7 +3,6 @@ FiveInRowGameApp.factory('onStartGameCommand', ['$location', 'GameSystem', funct
 
         var obj = {};
         obj.run = function ($scope, message) {
-            console.log('second player joined! Lets play!');
             GameSystem.isPlayerTurn = message.parameters.isPlayerTurn;
             GameSystem.playerColor = message.parameters.playerColor;
             GameSystem.opponentName = message.parameters.opponentName;
@@ -35,7 +34,6 @@ FiveInRowGameApp.factory('onPrivateGameCreatedCommand', ['GameSystem', function 
 FiveInRowGameApp.factory('onMoveMadeCommand', ['GameSystem', function (GameSystem) {
         var obj = {};
         obj.run = function ($scope, message) {
-            console.log('Zrobiono ruch');
             var board = GameSystem.board;
             board.setByXY(message.parameters.x, message.parameters.y, {type: message.parameters.color});
             GameSystem.isPlayerTurn = message.parameters.isPlayerTurn;
