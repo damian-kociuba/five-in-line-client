@@ -21,7 +21,7 @@
     <a ng-click="createPublicGame()" class="button">Create</a>
 </div>
 
-<div class="animated-message full-screen-message" ng-show="isWaitingForSecondPublicPlayer()">
+<div class="animated-message full-screen-message" ng-show="GameSystem.isWaitingForSecondPublicPlayer">
     <h3>Waiting for second player...</h3>
     <div class="loader">
         <div class="loader-inner cube-transition">
@@ -43,7 +43,7 @@
 
 <div class="animated-message full-screen-message" ng-show="isWaitingForSecondPlayer()">
     <h3>Waiting for second player...</h3>
-    Send to your friend this link:<br/>
+    Send this link to your friend:<br/>
     <a class="invitation-link" href="{{newPrivateGameJoinUrl}}">{{newPrivateGameJoinUrl}}</a>
     <div class="loader">
         <div class="loader-inner cube-transition">

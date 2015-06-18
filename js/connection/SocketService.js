@@ -8,8 +8,10 @@ FiveInRowGameApp.service('Socket', ['CommandManager', function (CommandManager) 
         this.setKeepConnection = function (keepConnectionArg) {
             keepConnection = keepConnectionArg;
         };
-
+        console.log('konstukcja soketa');
         this.connect = function () {
+            console.log('proba otwarcia');
+            console.log(connected);
             if (connected) {
                 return;
             }
@@ -24,6 +26,8 @@ FiveInRowGameApp.service('Socket', ['CommandManager', function (CommandManager) 
                 }
             };
             socket.onclose = function () {
+                console.log('close');
+                connected = false;
                 CommandManager.onClose();
                 if (keepConnection) {
                     connectionRefresher.stop();
